@@ -1,0 +1,9 @@
+# 서비스 계정 JSON 키 (절대 공개 저장소에 올리지 않음)
+credentials/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta name="_csrf" content="a1c66a07-5e80-423d-bdb0-fbae945b28ba"/>
+		<meta name="_csrf_header" content="X-CSRF-TOKEN"/>
+		<meta name="_csrf_parameterName" content="_csrf"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<!--  기획전 og:image 별도처리  (type:20 url 직접입력) -->
+		<meta property="og:type"          content="website" />
+		<meta property="og:site_name"     content="OLIVE YOUNG" />
+		<meta property="og:locale"        content="en_US" />
+		<meta property="og:title"         content="OLIVE YOUNG Global | Korea's No. 1 Health & Beauty Store" />
+		<meta property="og:url"           content="https://global.oliveyoung.com" />
+		<meta property="og:image"         content="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/images/common/logo_facebook_share.png" />
+		<meta property="og:description"	  content="Discover all things K-Beauty at OLIVE YOUNG Global. Shop skincare, makeup, beauty tools, supplements & more at great prices. Free shipping on orders over USD 60." />
+		<meta property="fb:app_id" content="581565842633204" />
+		
+		<meta name="google-site-verification" content="yFzpS2dLcJWFfHTJzGmfXbGjVQTnn0_GQMohtVictO8"/>
+		<meta name="facebook-domain-verification" content="licfajy2v1rb5c58ki9zgcg33s8usy" />
+		<meta name="description" content="Discover all things K-Beauty at OLIVE YOUNG Global. Shop skincare, makeup, beauty tools, supplements & more at great prices. Free shipping on orders over USD 60.">
+		<title>OLIVE YOUNG Global | Korea's No. 1 Health & Beauty Store</title>
+		
+		<!--  기획전 meta태그 추가 -->
+		<link rel="dns-prefetch" href="https://dist.oliveyoung.com/fo/a5c6019b5a">
+		<link rel="dns-prefetch" href="https://cdn-image.oliveyoung.com/">
+        <link rel="dns-prefetch" href="https://c.amazon-adsystem.com">
+		<link rel="dns-prefetch" href="https://connect.facebook.net">
+		<link rel="dns-prefetch" href="https://www.googletagmanager.com/">
+		
+		<!-- Chrome, Safari, IE -->
+		<link rel="shortcut icon" href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/images/favicon/OY_favicon_32.ico">
+		<!-- Firefox, Opera (Chrome and Safari say thanks but no thanks) -->
+		<link rel="icon" href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/images/favicon/OY_favicon_144.png">
+		<link rel="apple-touch-icon" href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/images/favicon/OY_favicon_144.png">
+
+		<link rel="manifest" href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/manifest.json">
+
+		<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/font.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/bootstrap.css" rel="stylesheet">
+		<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/bootstrap-datepicker.min.css" rel="stylesheet">
+        	<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/swiper.css" rel="stylesheet">
+        	<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/animate.min.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/common.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/contents.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/style.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/search.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/speedycat/s-style_v2.min.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/jp.css" rel="stylesheet">
+	        <link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/renewal.css" rel="stylesheet">
+	        <link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/video-js.css" rel="stylesheet">
+	        <link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/exchange.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/product-detail.css" rel="stylesheet">
+			<link href="https://dist.oliveyoung.com/fo/a5c6019b5a/resources/css/system-popup.css" rel="stylesheet">
+		</head><!-- body 메인: class="lead-on main-page"(category button, logo, cart button), sub page : class="lead-on sub-page"(back button, page title, search button), detail page : class="lead-on detail-page"(back button, page title, search button, home button, cart button), 결제 : class="lead-on payment-page"(back button) 해당 class에 따라 상단 header의 레이아웃이 바뀜 -->
+  <body class="lead-on detail-page">
+	
+	<!-- META TITLE -->
+    <input type="hidden" id="titleContents" value=""> 
+    <!-- META Description -->
+    <input type="hidden" id="descContents" value="">
+    <input type ="hidden" id="sha256LoginId" value="" /><!-- GA DATA 암호화된 로그인id -->
+    
+    <header class="navbar type03 promo-typeA" id="navbar">
+<!-- Data Setting -->
+<!-- S invalid cookie lang remove -->
+<!-- E invalid cookie lang remove --><!-- 리드 배너 시작 -->
+  <script type="text/javascript">
+      var leadBannerFileUrl = "https://static.globaloliveyoungshop.com/fo/resources/html/common/leadbanner-9999.html?v=202602030237";
+    </script>
+  <div class="wrap-top-banner-lead on" style="display:none;">
+  <div class="top-banner-lead-img"></div>
+  <div class="top-banner-lead on">
+    <button class="btn btn-banner-lead on" type="button" aria-expanded="true" data-attr="CM_leadBannerClose_click">
+      <svg class="close-lead-banner" viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.44043 4.10001L28.4404 27.1" stroke="#131518" stroke-width="2"/>
+        <path d="M28.4404 4.10001L5.44043 27.1" stroke="#131518" stroke-width="2"/>
+      </svg>
+      <span class="sr-only">lead banner</span>
+    </button>
+  </div>
+</div><!-- 리드 배너 끝 -->
+  
+  <!-- [S] 인앱메세지 -->
+  <div class="wrap-inapp-msg type-multiple mo-only">
+      <div id="inAppMsg1"></div>
+      <div id="inAppMsg2"></div>
+  </div>
+  <!-- [E] 인앱메세지 -->
+  
+  <div class="container">
+        <div class="pc-only">
+        <!-- navbar-top -->
+        <div class="navbar-top home-navigation-phase2">
+          <div class="group">
+            <h1 class="logo">
+              <a href="/" class="home-logo">
+                <span class="page-tit">OLIVE YOUNG</span> <!-- 텍스트는 항상 고정 -->
+              </a>
+            </h1>
+            <div class="input-group nav-search" data-testid="header-search-box">
+              <input type="text" class="form-control" id="searchIptPc" data-testid="header-search-box-input" maxlength="165" placeholder="Search for a product or brand..." data-attr="PCsearch_bar_click">
+              <span class="input-group-btn">
+                <button class="btn btn-search type2" id="searchBtnPc" data-testid="header-search-box-input-button" type="button" data-attr="PCsearch_result_click"><span class="sr-only">Search</span></button>
+              </span>
+
+            </div><!-- /input-group -->
+          </div>
+          
+ 
+          <div class="group">
+            <!-- nav-util -->
+            
+ 	      <div class="btn-group nav-util">
+            
+              <!-- [S] join -->
+              <div class="btn-group nav-join dropdown dropdown-hover" role="group">
+                <button class="btn btn-user" type="button" data-toggle="dropdown" aria-expanded="false" data-testid="header-sign-in-button">
+                </button>
+                
+                <ul class="list-btn-sign dropdown-menu" role="menu" data-testid="header-sign-in-dropdown-menu">
+                  <!-- [S] 로그인후 목록 -->
+                  <!-- [E] 로그인후 목록 -->
+                  
+ 	          	<li class="list-btn-sign-item" role="presentation" data-testid="header-sign-in-up-button"><a role="menuitem" tabindex="-1" href="javascript:void(0)" id="goLoginBtn

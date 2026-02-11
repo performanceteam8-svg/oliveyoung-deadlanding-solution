@@ -1,0 +1,10 @@
+# 로컬 인증 정보(절대 커밋하지 말 것)
+credentials/*.json
+credentials/*.txt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env

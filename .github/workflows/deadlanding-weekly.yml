@@ -1,0 +1,102 @@
+# 데드랜딩 점검: 매주 월·목 6시(KST) 실행, 9시(KST) Slack 알림
+# 수동 실행: Actions → "데드랜딩 주간 점검" → Run workflow (점검만 실행, Slack은 9시 스케줄 시 전송)
+
+name: 데드랜딩 주간 점검
+
+on:
+  schedule:
+    # 6시 KST 점검: 월·목 06:00 KST = 일 21:00 UTC, 수 21:00 UTC
+    - cron: '0 21 * * 0'
+    - cron: '0 21 * * 3'
+    # 9시 KST 알림: 월·목 09:00 KST = 월 00:00 UTC, 목 00:00 UTC
+    - cron: '0 0 * * 1'
+    - cron: '0 0 * * 4'
+  workflow_dispatch:
+
+jobs:
+  # 월·목 6시 KST (및 수동 실행): 점검만 수행, 결과를 캐시에 저장
+  check:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule' || github.event.schedule == '0 21 * * 0' || github.event.schedule == '0 21 * * 3'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set KST date
+        id: kst_date
+        run: echo "date=$(TZ=Asia/Seoul date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create credentials file
+        env:
+          CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}
+        run: |
+          mkdir -p credentials
+          echo "$CREDENTIALS_JSON" > credentials/service_account.json
+
+      - name: Run Step1 (URL 수집)
+        run: python deadlanding_step1_collect_urls.py 2>&1 | tee step1.log
+
+      - name: Run Step2 (URL 점검 및 시트 반영)
+        run: python deadlanding_step2_check_and_fill.py 2>&1 | tee step2.log
+
+      - name: Write summary for cache
+        if: always()
+        run: |
+          mkdir -p summary
+          tail -25 step2.log 2>/dev/null || tail -25 step1.log > summary/body.txt
+        continue-on-error: true
+
+      - name: Set status for 9am Slack
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then echo "success" > summary/status.txt; else echo "failure" > summary/status.txt; fi
+
+      - name: Save result to cache (for 9am Slack)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: summary
+          key: deadlanding-result-${{ steps.kst_date.outputs.date }}
+        continue-on-error: true
+
+  # 월·목 9시 KST: 캐시에서 당일 점검 결과 복원 후 Slack 전송
+  notify:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' && (github.event.schedule == '0 0 * * 1' || github.event.schedule == '0 0 * * 4')
+    steps:
+      - name: Set KST date
+        id: kst_date
+        run: echo "date=$(TZ=Asia/Seoul date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Restore cached result
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: summary
+          key: deadlanding-result-${{ steps.kst_date.outputs.date }}
+
+      - name: Slack notification (9am KST)
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then exit 0; fi
+          if [ -f summary/body.txt ]; then
+            SUMMARY=$(cat summary/body.txt)
+            if [ -f summary/status.txt ] && [ "$(cat summary/status.txt)" = "failure" ]; then
+              TITLE="❌ *데드랜딩 점검 알림* (오전 9시)\n오전 6시 점검 실패. 로그:"
+            else
+              TITLE="✅ *데드랜딩 점검 알림* (오전 9시)\n오전 6시 점검 결과:"
+            fi
+            BODY=$(jq -n --arg t "$TITLE" --arg s "$SUMMARY" '{text: ($t + "\n```" + $s + "```")}')
+          else
+            BODY=$(jq -n '{text: "📋 *데드랜딩 점검 알림* (오전 9시)\n오늘 오전 6시 점검 결과 캐시 없음. 시트에서 확인하세요."}')
+          fi
+          curl -sS -X POST "$SLACK_WEBHOOK_URL" -H 'Content-Type: application/json' -d "$BODY"
