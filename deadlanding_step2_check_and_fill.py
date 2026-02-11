@@ -8,8 +8,11 @@ import os
 import re
 import sys
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse, parse_qs
+
+# 검수 시각은 KST로 기록 (GitHub Actions는 UTC라서 명시적으로 KST 사용)
+KST = timezone(timedelta(hours=9))
 
 if sys.platform == "win32":
     try:
@@ -353,10 +356,13 @@ def main():
     ws_review.update(values, "C%d" % URL_FIRST_ROW, value_input_option="USER_ENTERED")
     print('5) 검수 탭 C%d~C%d에 정상/오류 결과를 기입했습니다.' % (URL_FIRST_ROW, URL_FIRST_ROW + len(results) - 1))
 
-    # D2 셀에만 최종 검수 시각 기입 (yy/mm/dd hh:mm)
-    inspect_time = datetime.now().strftime("%y/%m/%d %H:%M")
-    ws_review.update("D2", [[inspect_time]], value_input_option="USER_ENTERED")
-    print('5) 검수 탭 D2에 검수 시각(%s)을 기입했습니다.' % inspect_time)
+    # D2 셀에만 최종 검수 시각 기입 (KST, yy/mm/dd hh:mm)
+    inspect_time = datetime.now(KST).strftime("%y/%m/%d %H:%M")
+    try:
+        ws_review.update_acell("D2", inspect_time)
+        print('5) 검수 탭 D2에 검수 시각(%s, KST)을 기입했습니다.' % inspect_time)
+    except Exception as e:
+        print('D2 검수 시각 기입 실패 (무시하고 계속): %s' % e)
 
     # 테스트 시 4개 Builder 시트 마지막 행 제한 (STEP2_TEST_LAST_ROW=362 등)
     da_last = min(BUILDER_DA_DATA_LAST_ROW, TEST_LAST_ROW) if TEST_LAST_ROW else BUILDER_DA_DATA_LAST_ROW
