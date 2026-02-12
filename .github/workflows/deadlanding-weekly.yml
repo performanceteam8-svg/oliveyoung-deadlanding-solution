@@ -12,12 +12,18 @@ on:
     - cron: '0 0 * * 1'
     - cron: '0 0 * * 4'
   workflow_dispatch:
+    inputs:
+      notify_only:
+        description: 'Slack 알림만 전송 (캐시 있으면 그대로, 없으면 fallback 메시지)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   # 월·목 6시 KST (및 수동 실행): 점검만 수행, 결과를 캐시에 저장
   check:
     runs-on: ubuntu-latest
-    if: github.event_name != 'schedule' || github.event.schedule == '0 21 * * 0' || github.event.schedule == '0 21 * * 3'
+    if: ${{ !inputs.notify_only && (github.event_name != 'schedule' || github.event.schedule == '0 21 * * 0' || github.event.schedule == '0 21 * * 3') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,10 +73,10 @@ jobs:
           key: deadlanding-result-${{ steps.kst_date.outputs.date }}
         continue-on-error: true
 
-  # 월·목 9시 KST: 캐시에서 당일 점검 결과 복원 후 Slack 전송
+  # 월·목 9시 KST: 캐시에서 당일 점검 결과 복원 후 Slack 전송 (수동 시 notify_only=true 로 알림만 테스트 가능)
   notify:
     runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' && (github.event.schedule == '0 0 * * 1' || github.event.schedule == '0 0 * * 4')
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.notify_only == true) || (github.event_name == 'schedule' && (github.event.schedule == '0 0 * * 1' || github.event.schedule == '0 0 * * 4')) }}
     steps:
       - name: Set KST date
         id: kst_date
@@ -93,7 +99,9 @@ jobs:
           SLACK_FALLBACK_MSG: ${{ vars.SLACK_FALLBACK_MSG || '오늘 오전 6시 점검 결과가 없습니다. 시트에서 확인해주세요.' }}
           SPREADSHEET_URL: ${{ vars.SPREADSHEET_URL || 'https://docs.google.com/spreadsheets/d/12gg9I032qYNdcE_a0d7RB02eguhLKU7mxiAEkJ47RcU/edit' }}
         run: |
-          if [ -z "$SLACK_WEBHOOK_URL" ]; then exit 0; fi
+          # URL 앞뒤 공백·줄바꿈 제거 (exit code 3 = URL malformed 방지)
+          SLACK_WEBHOOK_URL="$(echo "$SLACK_WEBHOOK_URL" | tr -d '\n\r' | xargs)"
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then echo "SLACK_WEBHOOK_URL 비어 있음, 건너뜀"; exit 0; fi
           if [ -f summary/body.txt ]; then
             SUMMARY=$(cat summary/body.txt)
             if [ -f summary/status.txt ] && [ "$(cat summary/status.txt)" = "failure" ]; then
@@ -105,6 +113,8 @@ jobs:
             BODY_TEXT="📋 $SLACK_FALLBACK_MSG"
             SUMMARY=""
           fi
+          # Slack 블록 텍스트 제한(3000자) 방지를 위해 로그 요약 길이 제한
+          SUMMARY="${SUMMARY:0:2500}"
           PAYLOAD=$(jq -n \
             --arg user "$SLACK_USERNAME" \
             --arg body "$BODY_TEXT" \
@@ -115,4 +125,10 @@ jobs:
               (if $sum != "" then {type: "section", text: {type: "mrkdwn", text: ("```\n" + $sum + "\n```")}} else empty end),
               {type: "actions", elements: [{type: "button", text: {type: "plain_text", text: "결과 보기"}, url: $url}]}
             ]}')
-          curl -sS -X POST "$SLACK_WEBHOOK_URL" -H 'Content-Type: application/json' -d "$PAYLOAD"
+          HTTP_CODE=$(curl -sS -w '%{http_code}' -o /tmp/slack_resp -X POST "$SLACK_WEBHOOK_URL" -H 'Content-Type: application/json' -d "$PAYLOAD") || true
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "Slack 전송 실패. HTTP code: $HTTP_CODE"
+            echo "Slack 응답: $(cat /tmp/slack_resp 2>/dev/null || echo '없음')"
+            exit 1
+          fi
+          echo "Slack 전송 완료 (HTTP $HTTP_CODE)"
